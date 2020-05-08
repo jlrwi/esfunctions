@@ -2,7 +2,6 @@
     fudge, node
 */
 
-
 //MD # ESFunctions
 //MD Pure curried functions for basic Javascript operators, methods, and ~n
 //MD functions.
@@ -15,10 +14,34 @@
 //MD and (true) (false) | and true with false | false && true
 
 
-//test import JSCheck from "./JSCheck/jscheck.js";
-//test let jsc = JSCheck();
+//test import jscheck from "@jlrwi/jscheck";
+//test let jsc = jscheck();
+//test const identity = function (x) {
+//test     return x;
+//test };
+
+const method_call = function (method_name) {
+    return function (...args) {
+        return function (obj) {
+            return obj[method_name](args);
+        };
+    };
+};
 
 // Logic functions
+
+//test jsc.claim({
+//test     name: "and/or",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict(and (not (a)) (not (b)) === not(or (a) (b)));
+//test         };
+//test     },
+//test     specifier: [
+//test         jsc.boolean(),
+//test         jsc.boolean()
+//test     ]
+//test });
 
 // a -> a -> bool
 const and = function (b) {
@@ -34,6 +57,18 @@ const or = function (b) {
     };
 };
 
+//test jsc.claim({
+//test     name: "andf",
+//test     predicate: function (verdict) {
+//test         return function (a) {
+//test             return verdict(not(andf (identity) (not) (a)));
+//test         };
+//test     },
+//test     specifier: [
+//test         jsc.boolean()
+//test     ]
+//test });
+
 // a -> a -> b -> bool
 const andf = function (b) {
     return function (a) {
@@ -42,6 +77,18 @@ const andf = function (b) {
         };
     };
 };
+
+//test jsc.claim({
+//test     name: "orf",
+//test     predicate: function (verdict) {
+//test         return function (a) {
+//test             return verdict(orf (not) (identity) (a));
+//test         };
+//test     },
+//test     specifier: [
+//test         jsc.boolean()
+//test     ]
+//test });
 
 // a -> a -> b -> bool
 const orf = function (b) {
@@ -111,6 +158,12 @@ const either = function (predicate) {
 const add = function (y) {
     return function (x) {
         return y + x;
+    };
+};
+
+const subtract = function (y) {
+    return function (x) {
+        return y - x;
     };
 };
 
@@ -250,6 +303,22 @@ const array_concat = function (xs) {
     };
 };
 
+const array_insert = function (new_array) {
+    return function (at_position) {
+        return function (old_array) {
+            if (at_position < 0) {
+                at_position += old_array.length;
+            }
+
+            const front = old_array.slice(0, at_position);
+            const back = old_array.slice(at_position);
+            return front.concat(new_array, back);
+        };
+    };
+};
+
+const array_join = method_call ("join");
+
 const array_map = function (f) {
     return function (xs) {
         return Object.freeze(xs.map(f));
@@ -267,6 +336,27 @@ const array_reduce = function (f) {
         };
     };
 };
+
+const array_reverse = function (xs) {
+    return xs.slice().reverse();
+};
+
+const array_split = method_call ("split");
+
+//test jsc.claim({
+//test     name: "array join and split",
+//test     predicate: function (verdict) {
+//test         return function (array_of_string) {
+//test             const joined = array_join ("~") (array_of_string);
+//test             return verdict(
+//test                 joined === array_join ("~") (array_split ("~") (joined))
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.array(jsc.integer(10), jsc.string())
+//test     ]
+//test });
 
 // Object functions
 
@@ -359,6 +449,7 @@ export {
     max,
 
     add,
+    subtract,
     multiply,
     divide,
     remainder,
@@ -377,8 +468,12 @@ export {
     string_concat,
 
     array_concat,
+    array_insert,
+    array_join,
     array_map,
     array_reduce,
+    array_reverse,
+    array_split,
 
     prop,
     empty_object,

@@ -1,10 +1,13 @@
 {
-  "name": "esfunctions",
+  "name": "@jlrwi/esfunctions",
   "version": "1.0.0",
   "description": "Pure curried functions for basic Javascript operators, methods, and functions",
-  "main": "index.js",
+  "main": "esfunctions.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "extract-test ./src/esfunctions.js ./test/test_esfunctions.js",
+    "test": "node --experimental-modules ./test/test_esfunctions.js > test.log",
+    "posttest": "type test.log",
+    "stage": "extract-doc ./src/esfunctions.js README.md && extract-min ./src/esfunctions.js esfunctions.min.js"
   },
   "author": "Jonathan Reimer",
   "license": "ISC",
