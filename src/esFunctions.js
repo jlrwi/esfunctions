@@ -414,6 +414,18 @@ const prop = function (name) {
 
 // Miscellaneous functions
 
+const functional_if = function (predicate) {
+    return function (on_true, on_false) {
+        return function (x) {
+            return (
+                predicate (x)
+                ? on_true (x)
+                : on_false (x)
+            );
+        };
+    };
+};
+
 const log = function (x) {
     console.log(x);
     return x;
@@ -483,6 +495,7 @@ export {
     object_has_property,
     is_object,
 
+    functional_if,
     log,
     type_check
 };

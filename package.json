@@ -4,10 +4,10 @@
   "description": "Pure curried functions for basic Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
   "scripts": {
-    "pretest": "extract-test ./src/esfunctions.js ./test/test_esfunctions.js",
-    "test": "node --experimental-modules ./test/test_esfunctions.js > test.log",
+    "pretest": "extract-test ./src/esfunctions.js ./test/test_esFunctions.js",
+    "test": "node --experimental-modules ./test/test_esFunctions.js > test.log",
     "posttest": "type test.log",
-    "stage": "extract-doc ./src/esfunctions.js README.md && extract-min ./src/esfunctions.js esfunctions.min.js"
+    "stage": "extract-doc ./src/esFunctions.js README.md && extract-min ./src/esFunctions.js esFunctions.min.js"
   },
   "author": "Jonathan Reimer",
   "license": "ISC",
