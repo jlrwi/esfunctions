@@ -213,9 +213,25 @@ const exponent = function (power) {
 
 // Primitive comparison
 
+//test jsc.claim({
+//test     name: "equals",
+//test     predicate: function (verdict) {
+//test         return function (a) {
+//test             return verdict(equals (a) (a));
+//test         };
+//test     },
+//test     specifier: [
+//test         jsc.any()
+//test     ]
+//test });
+
 const equals = function (y) {
     return function (x) {
-        return x === y;
+        return (
+            (Number.isNaN(x) && Number.isNaN(y))
+            ? true
+            : x === y
+        );
     };
 };
 
