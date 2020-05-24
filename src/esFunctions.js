@@ -20,7 +20,7 @@
 //test     return x;
 //test };
 
-const method_call = function (method_name) {
+const method = function (method_name) {
     return function (...args) {
         return function (obj) {
             return obj[method_name](args);
@@ -333,7 +333,7 @@ const array_insert = function (new_array) {
     };
 };
 
-const array_join = method_call ("join");
+const array_join = method ("join");
 
 const array_map = function (f) {
     return function (xs) {
@@ -357,7 +357,7 @@ const array_reverse = function (xs) {
     return xs.slice().reverse();
 };
 
-const array_split = method_call ("split");
+const array_split = method ("split");
 
 //test jsc.claim({
 //test     name: "array join and split",
@@ -513,5 +513,6 @@ export {
 
     functional_if,
     log,
+    method,
     type_check
 };
