@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "Pure curried functions for basic Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
+  "devDependencies": {
+    "@jlrwi/jscheck": "*"
+  },
   "scripts": {
     "pretest": "extract-test ./src/esfunctions.js ./test/test_esFunctions.js",
-    "test": "node --experimental-modules ./test/test_esFunctions.js > test.log",
+    "test": "node ./test/test_esFunctions.js > test.log",
     "posttest": "type test.log",
-    "stage": "extract-doc ./src/esFunctions.js README.md && extract-min ./src/esFunctions.js esFunctions.min.js"
+    "stage": "extract-doc ./src/esFunctions.js README.md & extract-min ./src/esFunctions.js esFunctions.min.js"
   },
   "author": "Jonathan Reimer",
   "license": "ISC",

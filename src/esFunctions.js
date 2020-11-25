@@ -2,16 +2,16 @@
     fudge, node
 */
 
-//MD # ESFunctions
-//MD Pure curried functions for basic Javascript operators, methods, and ~n
-//MD functions.
-//MD
-//MD Functions which take two same-typed values follow this convention:
-//MD ESFunctions        | English             | Javascript
-//MD -------------------|---------------------|--------------
-//MD divide (9) (4)     | divide by 9, 4      | 4 / 9
-//MD lt (5) (1)         | lt 5 is 1           | 1 < 5
-//MD and (true) (false) | and true with false | false && true
+//MD # ESFunctions/p
+//MD Pure curried functions for basic Javascript operators, methods, and
+//MD functions./p
+//MD /p
+//MD Functions which take two same-typed values follow this convention:/p
+//MD ESFunctions        | English             | Javascript/p
+//MD -------------------|---------------------|--------------/p
+//MD divide (9) (4)     | divide by 9 with 4  | 4 / 9/p
+//MD lt (5) (1)         | lt 5 is 1           | 1 < 5/p
+//MD and (true) (false) | and true with false | false && true/p
 
 
 //test import jscheck from "@jlrwi/jscheck";
