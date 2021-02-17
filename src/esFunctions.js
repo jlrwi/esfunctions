@@ -23,7 +23,7 @@
 const method = function (method_name) {
     return function (...args) {
         return function (obj) {
-            return obj[method_name](args);
+            return obj[method_name](...args);
         };
     };
 };
@@ -31,13 +31,13 @@ const method = function (method_name) {
 // Logic functions
 
 //test jsc.claim({
-//test     name: "and/or",
+//test     name: "and/or/not",
 //test     predicate: function (verdict) {
 //test         return function (a, b) {
 //test             return verdict(and (not (a)) (not (b)) === not(or (a) (b)));
 //test         };
 //test     },
-//test     specifier: [
+//test     signature: [
 //test         jsc.boolean(),
 //test         jsc.boolean()
 //test     ]
@@ -64,7 +64,7 @@ const or = function (b) {
 //test             return verdict(not(andf (identity) (not) (a)));
 //test         };
 //test     },
-//test     specifier: [
+//test     signature: [
 //test         jsc.boolean()
 //test     ]
 //test });
@@ -85,7 +85,7 @@ const andf = function (b) {
 //test             return verdict(orf (not) (identity) (a));
 //test         };
 //test     },
-//test     specifier: [
+//test     signature: [
 //test         jsc.boolean()
 //test     ]
 //test });
@@ -106,7 +106,7 @@ const orf = function (b) {
 //test             return verdict(Boolean(value) === not(not(value)));
 //test         };
 //test     },
-//test     specifier: [
+//test     signature: [
 //test         jsc.any()
 //test     ]
 //test });
@@ -114,6 +114,28 @@ const orf = function (b) {
 const not = function (x) {
     return !x;
 };
+
+//test jsc.claim({
+//test     name: "either, lt, add, negate",
+//test     predicate: function (verdict) {
+//test         return function (value) {
+//test             return verdict(
+//test                 either (
+//test                     lt (0)
+//test                 ) (
+//test                     negate
+//test                 ) (
+//test                     add (0)
+//test                 ) (
+//test                     value
+//test                 ) === Math.abs(value)
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-99999, 99999)
+//test     ]
+//test });
 
 const either = function (predicate) {
     return function (if_true) {
@@ -161,25 +183,69 @@ const add = function (y) {
     };
 };
 
+//test jsc.claim({
+//test     name: "subtract, add, and negate",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict(subtract (a) (b) === add (a) (negate (b)));
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-999, 999),
+//test         jsc.integer(-999, 999)
+//test     ]
+//test });
+
 const subtract = function (y) {
     return function (x) {
         return y - x;
     };
 };
 
-// Tests that should work on the next 4 functions don't because of problems
-// with numbers
+//test jsc.claim({
+//test     name: "multiply and divide",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict(divide (b) (multiply (a) (b)) === a);
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(),
+//test         jsc.integer()
+//test     ]
+//test });
+
 const multiply = function (y) {
     return function (x) {
         return x * y;
     };
 };
 
+// Tests that should work on the next 2 functions don't because of problems
+// with numbers
 const divide = function (y) {
     return function (x) {
         return x / y;
     };
 };
+
+//test jsc.claim({
+//test     name: "multiply and invert",
+//test     predicate: function (verdict) {
+//test         return function (a) {
+//test             return verdict(multiply (2**a) (invert (2**a)) === 1);
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-99,99)
+//test     ]
+//test });
+
+const invert = function (y) {
+    return divide (y) (1);
+};
+
+const negate = multiply (-1);
 
 // Sign is taken from x
 const remainder = function (y) {
@@ -199,11 +265,50 @@ const modulus = function (y) {
     };
 };
 
-const invert = function (y) {
-    return divide (y) (1);
+//test jsc.claim({
+//test     name: "divider",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             const result = divider (a) (b);
+//test             return verdict(
+//test                 (result.quotient * a) + result.remainder === b
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-999,999),
+//test         jsc.integer(-999,999)
+//test     ]
+//test });
+
+const divider = function (divisor) {
+    return function (dividend) {
+        const q = Math.trunc(dividend / divisor);
+        return Object.freeze({
+            quotient: q,
+            remainder: dividend - (q * divisor)
+        });
+    };
 };
 
-const negate = multiply (-1);
+//test jsc.claim({
+//test     name: "method and exponent",
+//test     predicate: function (verdict) {
+//test         return function (base, power) {
+//test             return verdict(
+//test                 exponent (
+//test                     power
+//test                 ) (
+//test                     base
+//test                 ) === method ("pow") (base, power) (Math)
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(99),
+//test         jsc.integer(5)
+//test     ]
+//test });
 
 const exponent = function (power) {
     return function (x) {
@@ -220,7 +325,7 @@ const exponent = function (power) {
 //test             return verdict(equals (a) (a));
 //test         };
 //test     },
-//test     specifier: [
+//test     signature: [
 //test         jsc.any()
 //test     ]
 //test });
@@ -310,12 +415,26 @@ const min = function (y) {
 // String functions
 
 const string_concat = add;
+const string_split = method ("split");
 
 // Array functions
 
 const array_concat = function (xs) {
     return function (ys) {
         return Object.freeze(xs.concat(ys));
+    };
+};
+
+const array_append = function (xs) {
+    return function (x) {
+        return array_concat (xs) ([x]);
+    };
+};
+
+const array_create = function (fill_with) {
+    return function (size) {
+        const arr = new Array(size).fill(fill_with);
+        return Object.freeze(arr);
     };
 };
 
@@ -334,6 +453,38 @@ const array_insert = function (new_array) {
 };
 
 const array_join = method ("join");
+
+//test jsc.claim({
+//test     name: "array join and string split",
+//test     predicate: function (verdict) {
+//test         return function (array_of_string) {
+//test             const joined = array_join ("~") (array_of_string);
+//test             return verdict(
+//test                 joined === array_join ("~") (string_split ("~") (joined))
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.array(jsc.integer(10), jsc.string())
+//test     ]
+//test });
+
+const array_slice = method ("slice");
+
+// (a -> b -> c) -> [a] -> [b] -> [c]
+const array_zip = function (zipper) {
+    return function (list1) {
+        return function (list2) {
+            let result = [];
+
+            list1.forEach(function (item, index) {
+                result.push(zipper (item) (list2[index]));
+            });
+
+            return result;
+        };
+    };
+};
 
 const array_map = function (f) {
     return function (xs) {
@@ -357,34 +508,23 @@ const array_reverse = function (xs) {
     return xs.slice().reverse();
 };
 
-const array_split = method ("split");
-
-//test jsc.claim({
-//test     name: "array join and split",
-//test     predicate: function (verdict) {
-//test         return function (array_of_string) {
-//test             const joined = array_join ("~") (array_of_string);
-//test             return verdict(
-//test                 joined === array_join ("~") (array_split ("~") (joined))
-//test             );
-//test         };
-//test     },
-//test     signature: [
-//test         jsc.array(jsc.integer(10), jsc.string())
-//test     ]
-//test });
-
 // Object functions
+
+const null_prototype = Object.getPrototypeOf({});
 
 const empty_object = function () {
     return Object.create(null);
 };
 
-// Doesn't resolve Map or Set
+// Prototype checks only allow {} or Object.create(null)
+// Otherwise doesn't resolve Map or Set
 const is_object = function (x) {
     return (
         typeof x === "object"
-        ? (x !== null) && !Array.isArray(x)
+        ? (x !== null) && !Array.isArray(x) && (
+            (Object.getPrototypeOf(x) === null_prototype) ||
+            (Object.getPrototypeOf(x) === null)
+        )
         : false
     );
 };
@@ -414,11 +554,29 @@ const object_concat = function (b) {
     };
 };
 
+const object_append = function (obj) {
+    return function (key) {
+        return function (val) {
+            return object_concat (obj) (Object.fromEntries([[key, val]]));
+        };
+    };
+};
+
 const object_create_pair = function (key) {
     return function (val) {
         return minimal_object (
             Object.fromEntries([[key, val]])
         );
+    };
+};
+
+const object_map = function (f) {
+    return function (obj) {
+        let result = Object.create(null);
+        Object.keys(obj).forEach(function (key) {
+            result[key] = f(obj[key]);
+        });
+        return Object.freeze(result);
     };
 };
 
@@ -428,7 +586,68 @@ const prop = function (name) {
     };
 };
 
+const map_new = function (contents) {
+    return new Map(contents);
+};
+
+const map_get = function (key) {
+    return function (m) {
+        return m.get(key);
+    };
+};
+
+const map_append = function (m) {
+    return function (key) {
+        return function (val) {
+            const result = map_new(m);
+            return result.set(key, val);
+        };
+    };
+};
+
+const map_has = function (key) {
+    return function (m) {
+        return m.has(key);
+    };
+};
+
+const get_prototype_list = function (obj) {
+    let list = [];
+    const descender = function (o) {
+        const proto = Object.getPrototypeOf(o);
+        if (proto !== null) {
+            list.push(proto);
+            descender (proto);
+        }
+    };
+
+    descender(obj);
+    return list;
+};
+
+/*
+const propN = function (...args) {
+    return pipeN(
+        array_reverse,
+        array_map (prop),
+        spread_apply (pipeN)
+    ) (
+        args
+    );
+};
+*/
+
 // Miscellaneous functions
+
+const spread_apply = function (f) {
+    return function (args_array) {
+        return f(...args_array);
+    };
+};
+
+//const rest = function (...args) {
+//    return args;
+//};
 
 const functional_if = function (predicate) {
     return function (on_true, on_false) {
@@ -480,6 +699,7 @@ export {
     subtract,
     multiply,
     divide,
+    divider,
     remainder,
     modulus,
     exponent,
@@ -494,25 +714,38 @@ export {
     either,
 
     string_concat,
+    string_split,
 
+    array_append,
     array_concat,
+    array_create,
     array_insert,
     array_join,
     array_map,
     array_reduce,
     array_reverse,
-    array_split,
+    array_slice,
+    array_zip,
 
     prop,
+//    propN,
     empty_object,
     minimal_object,
+    object_append,
     object_concat,
     object_create_pair,
     object_has_property,
+    object_map,
     is_object,
+
+    map_new,
+    map_get,
+    map_has,
+    map_append,
 
     functional_if,
     log,
     method,
+    spread_apply,
     type_check
 };

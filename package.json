@@ -1,8 +1,11 @@
 {
   "name": "@jlrwi/esfunctions",
-  "version": "1.0.0",
-  "description": "Pure curried functions for basic Javascript operators, methods, and functions",
+  "version": "1.1.0",
+  "description": "Pure curried functions for Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
+  "files": [
+    "/src"
+  ],
   "devDependencies": {
     "@jlrwi/jscheck": "*"
   },
