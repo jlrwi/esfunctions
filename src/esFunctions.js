@@ -245,7 +245,26 @@ const invert = function (y) {
     return divide (y) (1);
 };
 
-const negate = multiply (-1);
+const negate = function (x) {
+    return -x;
+};
+
+//test jsc.claim({
+//test     name: "multiply, divide, and remainder",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict((
+//test                 Math.trunc(divide (b) (a)) * b
+//test             ) + (
+//test                 remainder (b) (a)
+//test             ) === a);
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-99, 99),
+//test         jsc.wun_of([jsc.integer(-9, -1), jsc.integer(1, 9)])
+//test     ]
+//test });
 
 // Sign is taken from x
 const remainder = function (y) {
@@ -254,14 +273,27 @@ const remainder = function (y) {
     };
 };
 
+//test jsc.claim({
+//test     name: "remainder and modulus",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict((
+//test                 remainder (b) (a) * Math.sign(a)
+//test             ) === (
+//test                 modulus (b) (a) * Math.sign(b)
+//test             ));
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(-99, 99),
+//test         jsc.wun_of([jsc.integer(-9, -1), jsc.integer(1, 9)])
+//test     ]
+//test });
+
 // Sign is taken from y
 const modulus = function (y) {
     return function (x) {
-        return (x % y) * (
-            Math.sign(x) === Math.sign(y)
-            ? 1
-            : -1
-        );
+        return (x % y) * (Math.sign(x) * Math.sign(y));
     };
 };
 
@@ -400,6 +432,19 @@ const gt = function (y) {
     };
 };
 
+//test jsc.claim({
+//test     name: "min, max, and add",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             return verdict(max (a) (b) + min (a) (b) === a + b);
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(),
+//test         jsc.integer()
+//test     ]
+//test });
+
 const max = function (y) {
     return function (x) {
         return Math.max(x, y);
@@ -438,17 +483,20 @@ const array_create = function (fill_with) {
     };
 };
 
-const array_insert = function (new_array) {
-    return function (at_position) {
+// Flipped arg order for first 2, refactored return
+const array_insert = function (at_position) {
+    return function (new_array) {
         return function (old_array) {
             if (at_position < 0) {
                 at_position += old_array.length;
             }
 
-            const front = old_array.slice(0, at_position);
-            const back = old_array.slice(at_position);
-            return front.concat(new_array, back);
-        };
+            return [
+                ...list.slice(0, at_position), 
+                ...new_array,
+                ...list.slice(at_position)
+            ];
+         };
     };
 };
 
@@ -485,6 +533,8 @@ const array_zip = function (zipper) {
         };
     };
 };
+
+const array_filter = method ("filter");
 
 const array_map = function (f) {
     return function (xs) {
@@ -719,6 +769,7 @@ export {
     array_append,
     array_concat,
     array_create,
+    array_filter,
     array_insert,
     array_join,
     array_map,
