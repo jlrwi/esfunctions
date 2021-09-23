@@ -459,6 +459,26 @@ const min = function (y) {
 
 // String functions
 
+//test jsc.claim({
+//test     name: "string_concat",
+//test     predicate: function (verdict) {
+//test         return function (a, b, c) {
+//test             return verdict(
+//test                 string_concat (
+//test                     string_concat (a) (b)
+//test                 ) (c) == string_concat (a) (
+//test                     string_concat (b) (c)
+//test                 )
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.string(),
+//test         jsc.string(),
+//test         jsc.string()
+//test     ]
+//test });
+
 const string_concat = add;
 const string_split = method ("split");
 
@@ -470,11 +490,50 @@ const array_concat = function (xs) {
     };
 };
 
+//test jsc.claim({
+//test     name: "array_append and array_reduce",
+//test     predicate: function (verdict) {
+//test         return function (list, x) {
+//test             const reducer = array_reduce (add) (0);
+//test             return verdict(
+//test                 add (
+//test                     reducer (list)
+//test                 ) (
+//test                     x
+//test                 ) === reducer (
+//test                     array_append (list) (x)
+//test                 )
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.array(),
+//test         jsc.integer()
+//test     ]
+//test });
+
 const array_append = function (xs) {
     return function (x) {
         return array_concat (xs) ([x]);
     };
 };
+
+
+//test jsc.claim({
+//test     name: "array_create",
+//test     predicate: function (verdict) {
+//test         return function (a, b) {
+//test             const reducer = array_reduce (add) (0);
+//test             return verdict(
+//test                 array_reduce (add) (0) (array_create (a) (b)) === a * b
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.integer(),
+//test         jsc.integer()
+//test     ]
+//test });
 
 const array_create = function (fill_with) {
     return function (size) {
@@ -483,24 +542,70 @@ const array_create = function (fill_with) {
     };
 };
 
-// Flipped arg order for first 2, refactored return
+//test jsc.claim({
+//test     name: "array_insert and array_drop and array_join",
+//test     predicate: function (verdict) {
+//test         return function (list_a, list_b, position) {
+//test             if (Math.abs(position) > list_a.length) {
+//test                 position = (
+//test                     (10 - Math.abs(position) < list_a.length)
+//test                     ? Math.abs(position) - (10 - list_a.length)
+//test                     : list_a.length
+//test                 ) * Math.sign(position);
+//test             }
+//test             const new_list = array_insert (position) (list_b) (list_a);
+//test             const revert = (
+//test                 (position < 0)
+//test                 ? array_drop (position - list_b.length, position)
+//test                 : array_drop (position, position + list_b.length)
+//test             ) (
+//test                 new_list
+//test             );
+//test             return verdict(
+//test                 array_join () (list_a) === array_join () (revert)
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.array(jsc.integer(10), jsc.string()),
+//test         jsc.array(jsc.integer(10), jsc.string()),
+//test         jsc.integer(-10, 10)
+//test     ]
+//test });
+
+// Flipped arg order for first 2, refactored return - breaking change from 1.2.0
 const array_insert = function (at_position) {
     return function (new_array) {
         return function (old_array) {
-            if (at_position < 0) {
-                at_position += old_array.length;
-            }
-
             return [
-                ...list.slice(0, at_position), 
+                ...old_array.slice(0, at_position),
                 ...new_array,
-                ...list.slice(at_position)
+                ...old_array.slice(at_position)
             ];
-         };
+        };
     };
 };
 
-const array_join = method ("join");
+// like slice (inverse), dropped portion includes first position up to and not
+// including the second
+const array_drop = function (drop_from, drop_to) {
+    return function (list) {
+
+        if (drop_from === undefined) {
+            drop_from = 0;
+        }
+
+// if no drop_to, functions like slice
+        if (drop_to === undefined) {
+            return list.slice(0, drop_from);
+        }
+
+        return [
+            ...list.slice(0, drop_from),
+            ...list.slice(drop_to)
+        ];
+    };
+};
 
 //test jsc.claim({
 //test     name: "array join and string split",
@@ -517,8 +622,13 @@ const array_join = method ("join");
 //test     ]
 //test });
 
+const array_join = method ("join");
+
 const array_slice = method ("slice");
 
+// Use a function to combine two arrays into one going element by element
+// e.g. make array with minimum values at each index:
+//      array_zip (min) (list_a) (list_b)
 // (a -> b -> c) -> [a] -> [b] -> [c]
 const array_zip = function (zipper) {
     return function (list1) {
@@ -546,6 +656,8 @@ const array_reduce = function (f) {
     return function (initial) {
         return function (xs) {
             let acc = initial;
+
+// can't use .reduce because f is curried
             xs.forEach (function (val) {
                 acc = f (acc) (val);
             });
@@ -661,6 +773,7 @@ const map_has = function (key) {
     };
 };
 
+// Not yet added to export - is it useful?
 const get_prototype_list = function (obj) {
     let list = [];
     const descender = function (o) {
@@ -769,6 +882,7 @@ export {
     array_append,
     array_concat,
     array_create,
+    array_drop,
     array_filter,
     array_insert,
     array_join,
