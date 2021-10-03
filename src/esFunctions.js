@@ -501,7 +501,7 @@ const array_concat = function (xs) {
 //test                 ) (
 //test                     x
 //test                 ) === reducer (
-//test                     array_append (list) (x)
+//test                     array_append (x) (list)
 //test                 )
 //test             );
 //test         };
@@ -512,8 +512,8 @@ const array_concat = function (xs) {
 //test     ]
 //test });
 
-const array_append = function (xs) {
-    return function (x) {
+const array_append = function (x) {
+    return function (xs) {
         return array_concat (xs) ([x]);
     };
 };
@@ -716,11 +716,34 @@ const object_concat = function (b) {
     };
 };
 
-const object_append = function (obj) {
-    return function (key) {
-        return function (val) {
+// switched arg order
+const object_append = function (key) {
+    return function (val) {
+        return function (obj) {
             return object_concat (obj) (Object.fromEntries([[key, val]]));
         };
+    };
+};
+
+const object_delete_key = function (key) {
+    return function (obj) {
+        let result = Object.assign(empty_object(), obj);
+        delete result[key];
+        return Object.freeze(result);
+    };
+};
+
+const object_drop = function (key_list) {
+    return function (obj) {
+        return Object.freeze(Object.keys(obj).reduce(
+            function (result, key) {
+                if (!key_list.includes(key)) {
+                    result[key] = obj[key];
+                }
+                return result;
+            },
+            empty_object()
+        ));
     };
 };
 
@@ -899,6 +922,8 @@ export {
     object_append,
     object_concat,
     object_create_pair,
+    object_delete_key,
+    object_drop,
     object_has_property,
     object_map,
     is_object,
