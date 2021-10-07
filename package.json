@@ -1,13 +1,14 @@
 {
   "name": "@jlrwi/esfunctions",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Pure curried functions for Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
   "files": [
     "/src"
   ],
   "devDependencies": {
-    "@jlrwi/jscheck": "file:../jscheck"
+    "@jlrwi/jscheck": "file:../jscheck",
+    "@jlrwi/package-processor": "file:../pkg_processor"
   },
   "scripts": {
     "pretest": "extract-test ./src/esfunctions.js ./test/test_esFunctions.js",

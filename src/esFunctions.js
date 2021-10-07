@@ -772,7 +772,8 @@ const prop = function (name) {
 };
 
 const map_new = function (contents) {
-    return new Map(contents);
+    console.log("DEPRECATED: use functional_new() instead of map_new()");
+    return functional_new(Map)(contents);
 };
 
 const map_get = function (key) {
@@ -845,6 +846,10 @@ const functional_if = function (predicate) {
             );
         };
     };
+};
+
+const functional_new = function (Constructor) {
+    return new Constructor;
 };
 
 const log = function (x) {
@@ -934,6 +939,7 @@ export {
     map_append,
 
     functional_if,
+    functional_new,
     log,
     method,
     spread_apply,
