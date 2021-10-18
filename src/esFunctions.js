@@ -30,7 +30,7 @@
 //MD ### method/p
 //MD Invoke a method of an object./p
 //MD Syntax: `method(method_name)(arguments)(object)`/p
-//MD Example: `method("of")(6)(Array)` equates to `Array.of(6)/p`
+//MD Example: `method("of")(6)(Array)` equates to `Array.of(6)`/p
 const method = function (method_name) {
     return function (...args) {
         return function (obj) {

@@ -17,7 +17,8 @@ and (true) (false) | and true with false | false && true
 ### method 
 Invoke a method of an object. 
 Syntax: `method(method_name)(arguments)(object)` 
-Example: `method("of")(6)(Array)` equates to `Array.of(6)/p` ### and 
+Example: `method("of")(6)(Array)` equates to `Array.of(6)` 
+### and 
 Boolean and. 
 Syntax: `and(boolean)(boolean)` 
 Example: `and(true)(false) === false` 
