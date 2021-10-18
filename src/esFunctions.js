@@ -5,6 +5,11 @@
 //MD # ESFunctions/p
 //MD Pure curried functions for basic Javascript operators, methods, and
 //MD functions./p
+//MD ## Philosophy/p
+//MD - Include functions to replace impure Javascript functions and methods/p
+//MD - Include functions to replace non-unary Javascript functions and methods/p
+//MD - Include functions to replace Javascript operators/p
+//MD - Include equivalent functions for objects as for arrays where reasonable/p
 //MD /p
 //MD Functions which take two same-typed values follow this convention:/p
 //MD ESFunctions        | English             | Javascript/p
@@ -12,7 +17,7 @@
 //MD divide (9) (4)     | divide by 9 with 4  | 4 / 9/p
 //MD lt (5) (1)         | lt 5 is 1           | 1 < 5/p
 //MD and (true) (false) | and true with false | false && true/p
-
+//MD /p
 
 //test import jscheck from "@jlrwi/jscheck";
 //test let jsc = jscheck();
@@ -20,6 +25,12 @@
 //test     return x;
 //test };
 
+//MD ## Functions/p
+
+//MD ### method/p
+//MD Invoke a method of an object./p
+//MD Syntax: `method(method_name)(arguments)(object)`/p
+//MD Example: `method("of")(6)(Array)` equates to `Array.of(6)/p`
 const method = function (method_name) {
     return function (...args) {
         return function (obj) {
@@ -43,6 +54,10 @@ const method = function (method_name) {
 //test     ]
 //test });
 
+//MD ### and/p
+//MD Boolean and./p
+//MD Syntax: `and(boolean)(boolean)`/p
+//MD Example: `and(true)(false) === false`/p
 // a -> a -> bool
 const and = function (b) {
     return function (a) {
