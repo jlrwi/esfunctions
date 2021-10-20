@@ -7,8 +7,7 @@
     "/src"
   ],
   "devDependencies": {
-    "@jlrwi/jscheck": "file:../jscheck",
-    "@jlrwi/package-processor": "file:../pkg_processor"
+    "@jlrwi/jscheck": "github:jlrwi/jscheck"
   },
   "scripts": {
     "pretest": "extract-test ./src/esfunctions.js ./test/test_esFunctions.js",

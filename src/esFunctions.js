@@ -55,7 +55,7 @@ const method = function (method_name) {
 //test });
 
 //MD ### and/p
-//MD Boolean and./p
+//MD Boolean and/p
 //MD Syntax: `and(boolean)(boolean)`/p
 //MD Example: `and(true)(false) === false`/p
 // a -> a -> bool
