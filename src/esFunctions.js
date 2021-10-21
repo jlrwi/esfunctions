@@ -995,7 +995,7 @@ export {
     is_object,
 
     map_new,
-    map_get
+    map_get,
     map_set,
     map_has,
     map_append,
