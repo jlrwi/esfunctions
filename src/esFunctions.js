@@ -532,7 +532,7 @@ const array_concat = function (xs) {
 
 const array_append = function (x) {
     return function (xs) {
-        return array_concat(xs)([x]);
+        return Object.freeze(array_concat(xs)([x]));
     };
 };
 
@@ -668,15 +668,13 @@ const array_map = function (f) {
 
 const array_reduce = function (f) {
     return function (initial) {
-        return function (xs) {
-            let acc = initial;
-
-// can't use .reduce because f is curried
-            xs.forEach(function (val) {
-                acc = f(acc)(val);
-            });
-            return acc;
+        const uncurried_reducer = function (curried_reducer) {
+            return function (acc, val) {
+                return curried_reducer(acc)(val);
+            };
         };
+
+        return method("reduce")(uncurried_reducer(f), initial);
     };
 };
 
@@ -834,6 +832,16 @@ const map_get = function (key) {
     };
 };
 
+const map_set = function (key) {
+    return function (val) {
+        return function (obj) {
+            return Object.freeze(
+                method("set")(key, val)(functional_new(Map)(obj))
+            );
+        };
+    };
+};
+
 const map_append = function (m) {
     return function (key) {
         return function (val) {
@@ -987,7 +995,8 @@ export {
     is_object,
 
     map_new,
-    map_get,
+    map_get
+    map_set,
     map_has,
     map_append,
 
