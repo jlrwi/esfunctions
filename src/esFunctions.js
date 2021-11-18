@@ -897,9 +897,9 @@ const functional_if = function (predicate) {
             return function (x) {
                 return (
                     predicate(x)
-                    ? on_true(x)
-                    : on_false(x)
-                );
+                    ? on_true
+                    : on_false
+                )(x);
             };
         };
     };
