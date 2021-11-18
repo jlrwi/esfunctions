@@ -3,6 +3,8 @@
   "version": "4.2.1",
   "description": "Pure curried functions for Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
+  "homepage": "https://github.com/jlrwi/esfunctions",
+  "repository": "github:jlrwi/esfunctions",
   "files": [
     "/src"
   ],
