@@ -821,6 +821,18 @@ const prop = function (name) {
     };
 };
 
+// Lense-ish
+const prop_path = function (...props) {
+    return function (o) {
+
+        if (props.length === 0) {
+            return o;
+        }
+
+        return prop_path(...props.slice(1))(o[props[0]]);
+    };
+};
+
 const map_new = function (contents) {
     console.log("DEPRECATED: use functional_new(Map) instead of map_new()");
     return functional_new(Map)(contents);
@@ -981,6 +993,7 @@ export {
     array_zip,
 
     prop,
+    prop_path,
     empty_object,
     minimal_object,
     object_append,
