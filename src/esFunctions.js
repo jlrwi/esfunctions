@@ -644,9 +644,38 @@ const array_join = method("join");
 
 const array_slice = method("slice");
 
+//test jsc.claim({
+//test     name: "array zip, array_reduce, add, and subtract",
+//test     predicate: function (verdict) {
+//test         return function (list_a, list_b) {
+//test             return verdict(
+//test                 equals(
+//test                     array_reduce(
+//test                         add
+//test                     )(
+//test                         0
+//test                     )(
+//test                         array_zip(subtract)(list_a)(list_b)
+//test                     )
+//test                 )(
+//test                     subtract(
+//test                         array_reduce(add)(0)(list_a)
+//test                     )(
+//test                         array_reduce(add)(0)(list_b)
+//test                     )
+//test                 )
+//test             );
+//test         };
+//test     },
+//test     signature: [
+//test         jsc.array(10, jsc.integer()),
+//test         jsc.array(10, jsc.integer())
+//test     ]
+//test });
+
 // Use a function to combine two arrays into one array going element by element
 // e.g. make array with minimum values at each index:
-//      array_zip (min) (list_a) (list_b)
+//      array_zip(min)(list_a)(list_b)
 // (a -> b -> c) -> [a] -> [b] -> [c]
 const array_zip = function (zipper) {
     return function (list1) {
@@ -793,6 +822,16 @@ const object_map = function (f) {
                         ];
                     }
                 )
+            )
+        );
+    };
+};
+
+const object_pair_map = function (f) {
+    return function (obj) {
+        return Object.freeze(
+            Object.fromEntries(
+                Object.entries(obj).map(f)
             )
         );
     };
@@ -1004,6 +1043,7 @@ export {
     object_filter,
     object_has_property,
     object_map,
+    object_pair_map,
     object_reduce,
     is_object,
 

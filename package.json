@@ -1,6 +1,6 @@
 {
   "name": "@jlrwi/esfunctions",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "Pure curried functions for Javascript operators, methods, and functions",
   "main": "esfunctions.min.js",
   "homepage": "https://github.com/jlrwi/esfunctions",
