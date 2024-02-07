@@ -1,5 +1,5 @@
 /*jslint
-    fudge, node
+    node, unordered
 */
 
 //MD # ESFunctions/p
@@ -326,7 +326,7 @@ const modulus = function (y) {
 //test         };
 //test     },
 //test     signature: [
-//test         jsc.integer(-999,999),
+//test         jsc.wun_of([jsc.integer(-999,-1), jsc.integer(1,999)]),
 //test         jsc.integer(-999,999)
 //test     ]
 //test });
@@ -841,15 +841,22 @@ const object_pair_map = function (f) {
 const object_reduce = function (f) {
     return function (initial) {
         return function (obj) {
-            let acc = initial;
-            Object.entries(obj).forEach(function (key_val) {
-                acc = f(
-                    acc
-                )(
-                    object_create_pair(key_val[0])(key_val[1])
-                );
-            });
-            return Object.freeze(acc);
+//            let acc = initial;
+//            Object.entries(obj).forEach(function (key_val) {
+//                acc = f(
+//                    acc
+//                )(
+//                    object_create_pair(key_val[0])(key_val[1])
+//                );
+//            });
+//            return Object.freeze(acc);
+            const reducer = function (res, key_val) {
+                return f(res)(Object.fromEntries(key_val));
+            };
+
+            return Object.freeze(
+                Object.entries(obj).reduce(reducer, initial)
+            );
         };
     };
 };
