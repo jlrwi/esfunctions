@@ -2,6 +2,10 @@
     node, unordered
 */
 
+// Updated through JS2023
+
+//QUESTION: add bitwise operator functions or put in separate library?
+
 //MD # ESFunctions/p
 //MD Pure curried functions for basic Javascript operators, methods, and
 //MD functions./p
@@ -707,9 +711,12 @@ const array_reduce = function (f) {
     };
 };
 
-const array_reverse = function (xs) {
-    return xs.slice().reverse();
-};
+// New in JS 2023
+const array_reverse = method("toReversed")();
+
+//const array_reverse = function (xs) {
+//    return xs.slice().reverse();
+//};
 
 // Object functions
 
