@@ -31,6 +31,13 @@
 
 //MD ## Functions/p
 
+// JSLint doesn't like omitting the inner function
+const functional_new = function (Constructor) {
+    return function (...args) {
+        return new Constructor(...args);
+    };
+};
+
 //MD ### method/p
 //MD Invoke a method of an object./p
 //MD Syntax: `method(method_name)(arguments)(object)`/p
@@ -844,21 +851,29 @@ const object_pair_map = function (f) {
     };
 };
 
+// Created object_pair_reduce, mod this to only work on values?
 // (c -> {a: b} -> c) -> c -> {a: b} -> c
 const object_reduce = function (f) {
     return function (initial) {
         return function (obj) {
-//            let acc = initial;
-//            Object.entries(obj).forEach(function (key_val) {
-//                acc = f(
-//                    acc
-//                )(
-//                    object_create_pair(key_val[0])(key_val[1])
-//                );
-//            });
-//            return Object.freeze(acc);
+            const reducer = function (res, val) {
+                return f(res)(val);
+            };
+
+            return Object.freeze(
+                Object.values(obj).reduce(reducer, initial)
+            );
+        };
+    };
+};
+
+// New in v ?
+// (c -> [a, b] -> c) -> c -> {a: b} -> c
+const object_pair_reduce = function (f) {
+    return function (initial) {
+        return function (obj) {
             const reducer = function (res, key_val) {
-                return f(res)(Object.fromEntries(key_val));
+                return f(res)(key_val);
             };
 
             return Object.freeze(
@@ -887,7 +902,9 @@ const prop_path = function (...props) {
 };
 
 const map_new = function (contents) {
-    console.log("DEPRECATED: use functional_new(Map) instead of map_new()");
+    console.log(
+        "DEPRECATED esFunctions.map_new: use functional_new(Map) instead"
+    );
     return functional_new(Map)(contents);
 };
 
@@ -967,13 +984,6 @@ const functional_if = function (predicate) {
                 )(x);
             };
         };
-    };
-};
-
-// JSLint doesn't like omitting the inner function
-const functional_new = function (Constructor) {
-    return function (...args) {
-        return new Constructor(...args);
     };
 };
 
@@ -1059,6 +1069,7 @@ export {
     object_map,
     object_pair_map,
     object_reduce,
+    object_pair_reduce,
     is_object,
 
     map_new,
